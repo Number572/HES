@@ -7,6 +7,7 @@ import (
 	gp "github.com/number571/gopeer"
 	"net/http"
 	"time"
+	"os"
 )
 
 var (
@@ -16,7 +17,7 @@ var (
 
 func init() {
 	go delOldEmailsByTime(24*time.Hour, 6*time.Hour)
-	hesDefaultInit("localhost:8080")
+	hesDefaultInit(":" + os.GetEnv("PORT"))
 	fmt.Println("Server is listening...\n")
 }
 
