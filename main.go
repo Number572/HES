@@ -4,11 +4,10 @@ import (
 	"io"
 	"net/http"
 	"os"
-	gp "github.com/number571/gopeer"
 )
 
 func hello(w http.ResponseWriter, r *http.Request) {
-	gp.GenerateKey(1024)
+	GenerateKey(1024)
 	io.WriteString(w, "hello, world!")
 }
 
