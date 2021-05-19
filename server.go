@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	gp "github.com/number571/gopeer"
 	"net/http"
 	"time"
 	"os"
@@ -62,8 +63,8 @@ func indexPage(w http.ResponseWriter, r *http.Request) {
 		response(w, 2, "error: parse json")
 		return
 	}
-	pasw := HashSum([]byte(FLCONFIG.Pasw))
-	dect := DecryptAES(pasw, Base64Decode(req.Macp))
+	pasw := gp.HashSum([]byte(FLCONFIG.Pasw))
+	dect := gp.DecryptAES(pasw, gp.Base64Decode(req.Macp))
 	if !bytes.Equal([]byte(TMESSAGE), dect) {
 		response(w, 3, "error: message authentication code")
 		return
@@ -90,18 +91,18 @@ func emailSendPage(w http.ResponseWriter, r *http.Request) {
 		response(w, 3, "error: parse json")
 		return
 	}
-	pack := DeserializePackage([]byte(req.Data))
+	pack := gp.DeserializePackage([]byte(req.Data))
 	if pack == nil {
 		response(w, 4, "error: deserialize package")
 		return
 	}
 	hash := pack.Body.Hash
-	if !ProofIsValid(hash, POWSDIFF, pack.Body.Npow) {
+	if !gp.ProofIsValid(hash, POWSDIFF, pack.Body.Npow) {
 		response(w, 5, "error: proof of work")
 		return
 	}
-	pasw := HashSum([]byte(FLCONFIG.Pasw))
-	dech := DecryptAES(pasw, Base64Decode(req.Macp))
+	pasw := gp.HashSum([]byte(FLCONFIG.Pasw))
+	dech := gp.DecryptAES(pasw, gp.Base64Decode(req.Macp))
 	if !bytes.Equal(hash, dech) {
 		response(w, 6, "error: message authentication code")
 		return
@@ -114,8 +115,8 @@ func emailSendPage(w http.ResponseWriter, r *http.Request) {
 	for _, conn := range FLCONFIG.Conns {
 		go func() {
 			addr := conn[0]
-			pasw := HashSum([]byte(conn[1]))
-			req.Macp = Base64Encode(EncryptAES(pasw, hash))
+			pasw := gp.HashSum([]byte(conn[1]))
+			req.Macp = gp.Base64Encode(gp.EncryptAES(pasw, hash))
 			resp, err := HTCLIENT.Post(
 				"http://"+addr+"/email/send",
 				"application/json",

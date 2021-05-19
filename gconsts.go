@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	gp "github.com/number571/gopeer"
 	"golang.org/x/net/proxy"
 	"net/http"
 	"encoding/json"
@@ -39,15 +40,15 @@ func hesDefaultInit(address string) {
 			Timeout:   time.Second * 15,
 		}
 	}
-	Set(SettingsType{
+	gp.Set(gp.SettingsType{
 		"POWS_DIFF": uint(25),
 		"PACK_SIZE": uint(8 << 20),
 		"AKEY_SIZE": uint(2 << 10),
 		"SKEY_SIZE": uint(1 << 5),
 		"RAND_SIZE": uint(1 << 4),
 	})
-	MAXESIZE = Get("PACK_SIZE").(uint)
-	POWSDIFF = Get("POWS_DIFF").(uint)
+	MAXESIZE = gp.Get("PACK_SIZE").(uint)
+	POWSDIFF = gp.Get("POWS_DIFF").(uint)
 }
 
 func serialize(data interface{}) []byte {
